@@ -1,8 +1,7 @@
 name: Create and Release Latex File
 
 on:
-  push:
-    branches: [master]
+  [push]
 
 jobs:
   deploy:
@@ -20,12 +19,12 @@ jobs:
     - name: Install dependencies
       run: |
         pip3 install Mako pyyaml
-        sudo apt install  python3 python3-pip python3-yaml texlive-full texlive-luatex
+        sudo apt install p7zip-full python3 python3-pip python3-yaml texlive-full texlive-luatex
 
     - name: Decode secret
       env:
         SECRETS_PROPERTIES: ${{ secrets.SECRET_INFO }}
-      run: echo "$SECRET_INFO" | base64 -d > ./Info.json
+      run: echo "$SECRETS_PROPERTIES" | base64 -d > ./Info.json
 
     - name: Build the resume
       run: |
@@ -35,13 +34,12 @@ jobs:
       run: |
         make cv
 
-    #- name: Build the website
-    #  run: |
-    #    make website
-
-    - name: Show the directory
+    - name: Build the website
       run: |
-        ls
+        make website
+
+    - name: Zip the Website files
+      run: 7z a Website.zip _data/
 
     - name: Get Time
       id: time
@@ -56,7 +54,10 @@ jobs:
         path: 'json.property'
         property: 'version'
 
-    - name: echo artifact
+    - name: Echo the current version into the version.txt file
+      run: echo Release_${{ steps.read_property.outputs.value }}_${{ steps.time.outputs.time }} > version.txt
+
+    - name: Display Current Version
       run: echo ${{ steps.read_property.outputs.value }}
 
     - name: Create Release
@@ -69,7 +70,7 @@ jobs:
         release_name: Release_${{ steps.read_property.outputs.value }}_${{ steps.time.outputs.time }}
         body: Release_${{ steps.read_property.outputs.value }}_${{ steps.time.outputs.time }}
 
-    - name: Upload Release Asset
+    - name: Upload Resume to the Release
       id: upload-release-asset-resume 
       uses: actions/upload-release-asset@v1
       env:
@@ -80,7 +81,7 @@ jobs:
         asset_name: Resume.pdf
         asset_content_type: application/pdf
 
-    - name: Upload Release Asset
+    - name: Upload CV to the Release
       id: upload-release-asset-cv
       uses: actions/upload-release-asset@v1
       env:
@@ -90,3 +91,25 @@ jobs:
         asset_path: ${{ github.workspace }}/CV.pdf
         asset_name: CV.pdf
         asset_content_type: application/pdf
+
+    - name: Upload Website Data to the Release
+      id: upload-release-asset-website-data
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ${{ github.workspace }}/Website.zip
+        asset_name: Website.zip
+        asset_content_type: application/zip
+
+    - name: Upload Version.txt to the Release
+      id: upload-release-asset-version
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ${{ github.workspace }}/version.txt
+        asset_name: version.txt
+        asset_content_type: application/txt
