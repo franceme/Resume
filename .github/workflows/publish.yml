@@ -1,0 +1,92 @@
+name: Create and Release Latex File
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        pip3 install Mako pyyaml
+        sudo apt install  python3 python3-pip python3-yaml texlive-full texlive-luatex
+
+    - name: Decode secret
+      env:
+        SECRETS_PROPERTIES: ${{ secrets.SECRET_INFO }}
+      run: echo "$SECRET_INFO" | base64 -d > ./Info.json
+
+    - name: Build the resume
+      run: |
+        make resume
+
+    - name: Build the cv
+      run: |
+        make cv
+
+    #- name: Build the website
+    #  run: |
+    #    make website
+
+    - name: Show the directory
+      run: |
+        ls
+
+    - name: Get Time
+      id: time
+      uses: nanzm/get-time-action@v1.0
+      with:
+        format: 'YYYY-MM-DD-HH-mm'
+
+    - name: Read value from Properties-file
+      id: read_property
+      uses: christian-draeger/read-properties@1.0.1
+      with:
+        path: 'json.property'
+        property: 'version'
+
+    - name: echo artifact
+      run: echo ${{ steps.read_property.outputs.value }}
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: Release_${{ steps.read_property.outputs.value }}_${{ steps.time.outputs.time }}
+        release_name: Release_${{ steps.read_property.outputs.value }}_${{ steps.time.outputs.time }}
+        body: Release_${{ steps.read_property.outputs.value }}_${{ steps.time.outputs.time }}
+
+    - name: Upload Release Asset
+      id: upload-release-asset-resume 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ${{ github.workspace }}/Resume.pdf
+        asset_name: Resume.pdf
+        asset_content_type: application/pdf
+
+    - name: Upload Release Asset
+      id: upload-release-asset-cv
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ${{ github.workspace }}/CV.pdf
+        asset_name: CV.pdf
+        asset_content_type: application/pdf

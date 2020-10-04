@@ -1,0 +1,153 @@
+\documentclass[10pt]{article}
+
+\newif\ifFull
+\Fulltrue
+
+\usepackage{fullpage}
+\usepackage{url}
+\textheight=9.0in
+\pagestyle{plain}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+ \newcounter{saveenumi}
+\usepackage{enumitem}
+
+\begin{document}
+
+\begin{center}
+\Large{\textbf {{\sc ${me['fname']} ${me['lname']}}}}
+
+\end{center}
+
+
+\bigskip
+
+{\large \sc{CONTACT INFO}}
+
+\smallskip
+Email: ${me['email']} \hfill Phone: ${me['phone']}
+
+\bigskip
+{\large \sc{RESEARCH INTERESTS}}
+
+%for subsect in research['interests']:
+${', '.join(subsect)};
+
+\smallskip
+%endfor
+{\large \sc{EDUCATION}}
+
+%for col in education:
+\smallskip
+${col['Qualification']}, ${col['Dept']}, \textbf{${col['Name']}}, ${col['ShortLocation']} \hfill  ${col['Grad']}  
+
+%if 'Advisor' in col:
+Advisor: {\em ${col['Advisor']}}, ${col['AdvisorTitle']}.
+%endif
+
+%endfor
+
+\bigskip		
+{\large \sc{EMPLOYMENT}}
+
+%for i, job in enumerate(experience):
+\smallskip
+%if 'Dept' in job:
+${job['Dept']},
+%endif
+${job['name']}, ${job['addr']}, \hfill ${job['Start']}, ${job['End']}
+
+~~~~~~${job['title']}
+
+%endfor
+
+\bigskip
+{\large \sc{MENTORING}}
+
+%for i, mentee in enumerate(mentor):
+\smallskip
+
+${mentee['At']},
+
+\smallskip
+~~~~~~${mentee['name']}, ${mentee['title']}, \hfill ${mentee['start']} - ${mentee['end']}
+
+%endfor
+
+
+\bigskip
+{\large \sc{SELECT LEADERSHIP ACTIVITIES}}
+
+
+\begin{enumerate}
+
+%for grp in selectGroups:
+\item
+	{\bf ${[x for x in groups if x['Name'] == grp][0]['Position']} of {\em ${grp}} from ${[x for x in groups if x['Name'] == grp][0]['Start']} to ${[x for x in groups if x['Name'] == grp][0]['End']}}
+
+%endfor
+
+\end{enumerate}
+
+\bigskip
+{\large \sc{PEER-REVIEWED CONFERENCES/WORKSHOPS}}
+
+\begin{enumerate}[resume]
+
+%for i, paper in enumerate(submissions):
+%if paper['Type'] == 'Conference':
+\item
+${paper['Name']}.
+${', '.join(paper['Authors'])}.
+In {\em ${paper['Conf_Long']}.}. ${paper['Date']}.
+%endif
+%endfor
+
+\end{enumerate}
+
+
+Google Scholar: \url{https://scholar.google.com/citations?user=${me['Google_Scholar']}}
+
+
+\bigskip
+{\large \sc {\uppercase{select projects}}}
+
+\begin{itemize}
+
+%for key,value in selectProjects.items():
+
+\item
+For ${key},
+
+\begin{enumerate}
+
+%for project in value:
+\item
+${[x for x in projects if x['name'] == project][0]['publicDesc']}
+
+\url{https://github.com/${[x for x in projects if x['name'] == project][0]['github']}}
+
+%endfor
+
+\end{enumerate}
+%endfor
+
+\end{itemize}
+
+\bigskip
+{\large \sc{POSTERS}}
+\begin{enumerate}
+
+%for i, paper in enumerate(submissions):
+%if paper['Type'] == 'Poster':
+\item
+${paper['Name']}.
+${', '.join(paper['Authors'])}.
+In {\em ${paper['Conf_Long']}.}. ${paper['Date']}.
+%endif
+%endfor
+
+\end{enumerate}
+
+\end{document}
