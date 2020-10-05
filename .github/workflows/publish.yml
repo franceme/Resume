@@ -113,3 +113,12 @@ jobs:
         asset_path: ${{ github.workspace }}/version.txt
         asset_name: version.txt
         asset_content_type: application/txt
+
+    - name: Repository Dispatch
+      uses: peter-evans/repository-dispatch@v1
+      if: steps.git-check.outputs.modified == 'true'
+      with:
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        repository: franceme/franceme.github.io
+        event-type: event-build
+        client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
