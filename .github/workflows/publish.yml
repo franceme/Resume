@@ -116,7 +116,6 @@ jobs:
 
     - name: Repository Dispatch
       uses: peter-evans/repository-dispatch@v1
-      if: steps.git-check.outputs.modified == 'true'
       with:
         token: ${{ secrets.REPO_ACCESS_TOKEN }}
         repository: franceme/franceme.github.io
