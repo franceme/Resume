@@ -13,6 +13,14 @@
  \newcounter{saveenumi}
 \usepackage{enumitem}
 
+\usepackage{hyperref}
+\hypersetup{
+	pdfauthor={${me['lname']}, ${me['ffname']} },
+	pdftitle={${me['lname']}},
+	pdfsubject={Future Work},
+	pdfkeywords={${me['keywords']}}
+}
+
 \begin{document}
 
 \begin{center}
@@ -60,6 +68,10 @@ ${job['name']}, ${job['addr']}, \hfill ${job['Start']}, ${job['End']}
 
 ~~~~~~${job['title']}
 
+%if 'Note' in job:
+~~~~~~\textit{${job['Note']}}
+%endif
+
 %endfor
 
 \bigskip
@@ -71,7 +83,11 @@ ${job['name']}, ${job['addr']}, \hfill ${job['Start']}, ${job['End']}
 ${mentee['At']},
 
 \smallskip
+%if 'FERPA' in mentee and mentee['FERPA']:
 ~~~~~~${mentee['name']}, ${mentee['title']}, \hfill ${mentee['start']} - ${mentee['end']}
+%else:
+~~~~~~\textit{Unlisted}, ${mentee['title']}, \hfill ${mentee['start']} - ${mentee['end']}
+%endif
 
 %endfor
 

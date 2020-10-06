@@ -5,13 +5,13 @@
 
 \hypersetup{
 	pdfauthor={ ${me['lname']}, ${me['ffname']} },
-	pdftitle={ ${me['lname']}-Resume},
+	pdftitle={ ${me['lname']}},
 	pdfsubject={ Future Work },
 	pdfkeywords={${me['keywords']}}
 }
 
 \name{}{
-	${me['formal']}
+	${me['ffname']} ${me['lname']}
 }
 
 %%Enabling Control Flags
@@ -221,7 +221,11 @@
 		%>
 
 		%%If there are groupings
-		\experience
+		%if skyllLyst != '':
+			\experience
+		%else:
+			\shortexperience
+		%endif
 		{${job['End']}}
 		{${job['title']}}
 		{${skyllURL(job['URL'],job['name']) if EnableURL else skyllNonURL(job['name'])}}
@@ -236,9 +240,11 @@
 			\end{itemize}
 		%endif
 		}
+		%if skyllLyst != '':
 		{
-		${skyllLyst[:-2]}
+			${skyllLyst[:-2]}
 		}
+		%endif
 	%%ForEach job
 	%endfor
 	\end{experiences}

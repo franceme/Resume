@@ -39,6 +39,7 @@ XEBuild:
 	@make file="${file}" gen
 	@echo Building the report
 	@make tool="${XE}" file="${file}" build
+	#@tectonic ${file}_AUTO.tex
 	@mv ${file}_AUTO.pdf ${file}.pdf
 
 LUABuild:
