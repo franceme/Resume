@@ -1,7 +1,7 @@
 name: Create and Release Latex File
 
 on:
-  [push]
+  [push, workflow_dispatch]
 
 jobs:
   deploy:
