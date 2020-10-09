@@ -206,6 +206,8 @@ class website:
 			"githubpage": None if 'githubpage' not in skill else skill['githubpage'],
 			"dates": website.niceDates(skill['from'], skill['to']),
 			"description": skill['description']
+			,"rss": None if 'rss' not in skill else skill['rss']
+			,"actions": None if 'actions' not in skill else skill['actions']
 		}
 
 	def _grp(skill):
