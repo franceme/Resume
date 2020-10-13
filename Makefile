@@ -56,8 +56,13 @@ cv: CV.tex
 oldcv: CV_bak.tex
 	@make XEBuild file="CV_bak"
 
+sampleCover:
+	@make cover Script="SampleCoverLetterPrep.py"
+
 cover: CoverLetter.tex
-	@make XEBuild file="CoverLetter"
+	python3 ${Script} set
+	make XEBuild file="CoverLetter"
+	python3 ${Script} reset
 
 resume: Resume.tex
 	@make LUABuild file="Resume"

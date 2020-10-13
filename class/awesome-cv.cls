@@ -21,7 +21,7 @@
 %-------------------------------------------------------------------------------
 %                Identification
 %-------------------------------------------------------------------------------
-\ProvidesClass{awesome-cv}[2017/02/05 v1.6.1 Awesome Curriculum Vitae Class]
+\ProvidesClass{class/awesome-cv}[2017/02/05 v1.6.1 Awesome Curriculum Vitae Class]
 \NeedsTeXFormat{LaTeX2e}
 
 
@@ -161,9 +161,9 @@
 %                Configuration for fonts
 %-------------------------------------------------------------------------------
 % Set the FontAwesome font to be up-to-date.
-\setfontfamily\FA[Path=\@fontdir]{FontAwesome}
+% \newfontfamily\FA[Path=\@fontdir]{FontAwesome}
 % Set font for header (default is Roboto)
-\setfontfamily\headerfont[
+\newfontfamily\headerfont[
   Path=\@fontdir,
   UprightFont=*-Regular,
   ItalicFont=*-Italic,
@@ -171,7 +171,7 @@
   BoldItalicFont=*-BoldItalic,
 ]{Roboto}
 
-\setfontfamily\headerfontlight[
+\newfontfamily\headerfontlight[
   Path=\@fontdir,
   UprightFont=*-Thin,
   ItalicFont=*-ThinItalic,
@@ -471,7 +471,7 @@
         {}%
         {%
           \ifbool{isstart}{\setbool{isstart}{false}}{\acvHeaderSocialSep}%
-          \href{https://\@homepage}{\faHome\acvHeaderIconSep\@homepage}%
+          \href{http://\@homepage}{\faHome\acvHeaderIconSep\@homepage}%
         }%
       \ifthenelse{\isundefined{\@github}}%
         {}%
