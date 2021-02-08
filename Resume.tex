@@ -16,7 +16,7 @@
 
 %%Enabling Control Flags
 <%
-	EnableURL = False
+	EnableURL = True
 	PaperName = True
 	Title = True
 	GroupGroups = True
@@ -64,11 +64,11 @@
 	def latexReplace(string):
 		return str(string).replace('+','\%2B').replace('#','\%23').replace(' ','\%20')
 
-	def group(groups, url=False):
+	def group(groups, url=False, escape=[], noDate=True):
 		output = ''
 		toString = gpURL if url else gp
 
-		for group in [x for x in groups if x['End'] == 'Now' or AllGroups]:
+		for group in [x for x in groups if AllGroups or ( (x['End'] == 'Now' or noDate) and x['Name'] not in escape) ]:
 			date = group['Start'] + str('-') + group['End']
 
 			output += "\keywordsentry{" + date + "}{" + toString({
@@ -118,13 +118,13 @@
 %endif
 \tagline{}
 \socialinfo{
-	\smartphone{${me['phone']}}
+	%%\smartphone{${me['phone']}}
 	%if EnableURL:
-		\email{${me['email']}}
+		\email{${me['vt_email']}}
 		\github{${me['github']}}
 		\website{${me['website']}}
 	%else:
-		\emailDull{${me['email']}}
+		\emailDull{${me['vt_email']}}
 		\githubDull{${me['github']}}
 		\websiteDull{${me['website']}}
 	%endif
@@ -153,6 +153,7 @@
 	\begin{keywords}
 		<%
 			SkillDict = { 'Programming': 'lang', 'Frameworks': 'framework', 'Projects': 'projectType'}
+			#SkillDict = { 'Programming': 'lang', 'Frameworks': 'framework'}
 			toSkyllString = skyllURLBase if EnableURL else skyllNonURL
 		%>
 		%for name, value in SkillDict.items():
@@ -206,44 +207,45 @@
 		groupSkylls = []
 	%>
 	%for i, job in enumerate(experience):
+		%if 'Teaching' not in job['title']:
+			<%
+				samies = job['name'] == prev
+			%>
+			%if Spacing and i > 0 and not samies:
+				\emptySeparator
+			%endif
+			<%
+				prev = job['name']
+				skyllLyst = ''
+				for itrSkyll, learntSkyll in enumerate(job['Learnt']):
+					skyllLyst += toSkyllString(learntSkyll) + ', '
+			%>
 
-		<%
-			samies = job['name'] == prev
-		%>
-		%if Spacing and i > 0 and not samies:
-			\emptySeparator
-		%endif
-		<%
-			prev = job['name']
-			skyllLyst = ''
-			for itrSkyll, learntSkyll in enumerate(job['Learnt']):
-				skyllLyst += toSkyllString(learntSkyll) + ', '
-		%>
-
-		%%If there are groupings
-		%if skyllLyst != '':
-			\experience
-		%else:
-			\shortexperience
-		%endif
-		{${job['End']}}
-		{${job['title']}}
-		{${skyllURL(job['URL'],job['name']) if EnableURL else skyllNonURL(job['name'])}}
-		{${job['type']}}
-		{${job['Start']}}
-		{
-		%if "lines" in job:
-			\begin{itemize}
-				%for line in job['lines']:
-					\item ${line}.
-				%endfor
-			\end{itemize}
-		%endif
-		}
-		%if skyllLyst != '':
-		{
-			${skyllLyst[:-2]}
-		}
+			%%If there are groupings
+			%if skyllLyst != '':
+				\experience
+			%else:
+				\shortexperience
+			%endif
+			{${job['End']}}
+			{${job['title']}}
+			{${skyllURL(job['URL'],job['name']) if EnableURL else skyllNonURL(job['name'])}}
+			{${job['type']}}
+			{${job['Start']}}
+			{
+			%if "lines" in job and len(job['lines'])>0:
+				\begin{itemize}
+					%for line in job['lines']:
+						\item ${line}.
+					%endfor
+				\end{itemize}
+			%endif
+			}
+			%if skyllLyst != '':
+			{
+				${skyllLyst[:-2]}
+			}
+			%endif
 		%endif
 	%%ForEach job
 	%endfor
@@ -252,7 +254,8 @@
 	%%Section: Groups
 	%%\sectionTitle{Groups}{\faCommentsO}
 	%%\begin{keywords}
-	%%	${groupedGroup(groups,EnableURL) if GroupGroups else group(groups,EnableURL)}
+		%%${group(groups,EnableURL, escape=selectGroups,noDate=True)}
+		%%${groupedGroup(groups,EnableURL) if GroupGroups else group(groups,EnableURL)}
 	%%\end{keywords}
 
 \end{document}
