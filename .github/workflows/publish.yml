@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip3 install Mako pyyaml
-        sudo apt install p7zip-full python3 python3-pip python3-yaml texlive-full texlive-luatex
+        sudo apt install p7zip-full python3 python3-setuptools python3-pip python3-yaml texlive-full texlive-luatex
         pip3 install mako
         /usr/bin/python3 -m pip install mako
 
